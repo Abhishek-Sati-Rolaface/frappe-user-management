@@ -7,19 +7,10 @@ def login_user(username, password):
         login_manager = frappe.auth.LoginManager()
         login_manager.authenticate(user=username, pwd=password)
         login_manager.post_login()
-        
-        # Clear what Frappe auto-added after post_login()
-        frappe.response.pop("home_page", None)
-        frappe.response.pop("full_name", None)
-        frappe.response.pop("message", None)
 
     except frappe.exceptions.AuthenticationError:
         frappe.clear_messages()
-        return{
-            "status": "error",
-            "message": "Authentication Error!"
-        }
-        
+        raise frappe.exceptions.AuthenticationError("Invalid username or password")
 
     # api_generate = generate_keys(frappe.session.user)
     user = frappe.get_doc('User', frappe.session.user)
@@ -27,7 +18,6 @@ def login_user(username, password):
     return {
         "status": "success",
         "message":{
-                    "message":"Authentication success",
                     "sid":frappe.session.sid,
                     # "api_key":user.api_key,
                     # "api_secret":api_generate,
