@@ -1,11 +1,10 @@
-# response.py
-
 import frappe
 
 def _clean():
     """Remove all Frappe auto-populated keys"""
-    for key in ["home_page", "full_name", "message"]:
+    for key in ["home_page", "full_name", "message", "_server_messages"]:
         frappe.response.pop(key, None)
+    frappe.clear_messages()
 
 def success(data=None, http_status_code=200):
     _clean()
