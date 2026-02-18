@@ -25,3 +25,18 @@ def signup(**payload):
         return response.success(user.get("message"), http_status_code=201)
     except ValidationError as e:
         return response.validation_error(format_pydantic_errors(e))
+
+@frappe.whitelist(allow_guest=True)
+def forgot_password(email: str):
+    try:
+        user = frappe.get_doc("User", email)
+
+        user.reset_password(send_email=True)
+        return response.success(
+                                "Password reset link sent to your email, Please check your inbox", 
+                                http_status_code=200
+                            )
+    except Exception as e:
+        return response.error("Unable to process your request, Please try again later",
+                                http_status_code=500
+                            )
