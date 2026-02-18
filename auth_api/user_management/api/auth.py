@@ -40,3 +40,14 @@ def forgot_password(email: str):
         return response.error("Unable to process your request, Please try again later",
                                 http_status_code=500
                             )
+    
+@frappe.whitelist(allow_guest=True)
+def logout():
+    # Please add SID in cookies to logout properly.
+    try:
+        frappe.local.login_manager.logout()
+        return response.success("Logged out successfully")
+    except Exception as e:
+        return response.error("Unable to process your request, Please try again later",
+                                http_status_code=500
+                            )
