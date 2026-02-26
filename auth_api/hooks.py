@@ -237,3 +237,6 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+override_whitelisted_methods = {
+    "frappe.handler.handle_exception": "auth_api.user_management.utils.response.handle_exception"
+}

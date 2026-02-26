@@ -1,4 +1,5 @@
 import frappe
+from frappe.exceptions import PermissionError
 
 def _clean():
     """Remove all Frappe auto-populated keys"""
@@ -37,3 +38,16 @@ def validation_error(errors: dict):
         errors  = errors,
         http_status_code = 422
     )
+
+def handle_exception(e):
+    if isinstance(e, PermissionError):
+        frappe.clear_messages()
+        frappe.local.response.http_status_code = 403
+        frappe.response.clear()
+        frappe.response["message"] = {
+            "status": "error",
+            "message": "Forbidden"
+        }
+        return True
+
+    return False
