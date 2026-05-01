@@ -51,3 +51,24 @@ def handle_exception(e):
         return True
 
     return False
+
+def send_response_list(status="success", message="", data=None, status_code=200, http_status=200):
+
+    response_payload = {
+        "status_code": status_code,
+        "status": status,
+        "message": message
+    }
+
+    if data is not None:
+        if isinstance(data, dict) and "data" in data:
+            response_payload["data"] = data.get("data", [])
+            if "pagination" in data:
+                response_payload["pagination"] = data.get("pagination", {})
+        elif isinstance(data, list):
+            response_payload["data"] = data
+        else:
+            response_payload["data"] = data
+
+    frappe.local.response = frappe._dict(response_payload)
+    frappe.local.response.http_status_code = http_status
