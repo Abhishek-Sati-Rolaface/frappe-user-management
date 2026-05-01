@@ -1,5 +1,5 @@
 from auth_api.role_management.services.permission_service import create_permission
-from auth_api.role_management.utils.role_utils import build_role_search_filter, validate_role_name, build_role_doc
+from auth_api.role_management.utils.role_utils import build_role_search_filter, validate_role_exists, validate_role_name, build_role_doc
 import frappe
 
 def create_role(role_name: str, permission: list = []) -> dict:
@@ -51,4 +51,44 @@ def get_all_roles(page, page_size, search: str = None) -> dict:
             "has_next":    page < total_pages,
             "has_prev":    page > 1,
         },
+    }
+
+def get_role(role_name: str) -> dict:
+
+    validate_role_exists(role_name)
+
+    role = frappe.db.get_value(
+                "Role",
+                role_name,
+                ["name", "role_name"],
+                as_dict=True,
+            )
+
+    raw_perms = frappe.db.get_all(
+        "Custom DocPerm",
+        filters={"role": role_name},
+        fields=[
+            "parent", "read", "write", "create", "delete",
+            "print", "report", "import", "export",
+        ],
+    )
+
+    permissions = [
+        {
+            "module": perm.parent,
+            "read": perm.read,
+            "write": perm.write,
+            "create": perm.create,
+            "delete": perm.delete,
+            "report": perm.report,
+            "import": perm.get("import"),
+            "export": perm.export,
+        }
+        for perm in raw_perms
+    ]
+
+    return {
+        "roleId":      role.name,
+        "roleName":    role.role_name,
+        "permissions": permissions,
     }

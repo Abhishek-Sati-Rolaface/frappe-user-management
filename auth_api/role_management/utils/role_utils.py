@@ -22,3 +22,8 @@ def build_role_search_filter(search: str = None) -> list:
     return [
         ["Role", "role_name",   "like", f"%{search}%"],
     ]
+
+def validate_role_exists(role_name: str) -> None:
+    """Raise ValueError if role does not exist."""
+    if not frappe.db.exists("Role", role_name):
+        raise ValueError(f"Role '{role_name}' not found.")

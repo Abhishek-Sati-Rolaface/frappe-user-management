@@ -1,4 +1,4 @@
-from auth_api.role_management.services.role_service import create_role, get_all_roles
+from auth_api.role_management.services.role_service import create_role, get_all_roles, get_role
 from auth_api.user_management.utils import response
 
 import frappe
@@ -37,6 +37,21 @@ def get():
                             status_code = 200,
                             http_status = 200,
                         )
+
+    except ValueError as e:
+        return response.error(str(e))
+
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get_by_id():
+    role_name = frappe.request.args.get("id")
+
+    if not role_name:
+        return response.error("role is required.")
+
+    try:
+        result = get_role(role_name)
+
+        return response.success(result, http_status_code=200)
 
     except ValueError as e:
         return response.error(str(e))
