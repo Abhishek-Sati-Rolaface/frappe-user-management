@@ -7,11 +7,10 @@ def validate_role_name(role_name: str) -> None:
     if frappe.db.exists("Role", role_name):
         raise ValueError(f"Role '{role_name}' already exists.")
 
-def build_role_doc(role_name: str, description: str) -> dict:
+def build_role_doc(role_name: str) -> dict:
     return {
         "doctype":     "Role",
         "role_name":   role_name,
-        "description": description,
         "is_custom":   1,
         "desk_access": 0,
     }

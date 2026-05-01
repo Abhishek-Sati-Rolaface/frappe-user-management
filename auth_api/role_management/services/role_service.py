@@ -1,15 +1,16 @@
+from auth_api.role_management.services.permission_service import create_permission
 from auth_api.role_management.utils.role_utils import build_role_search_filter, validate_role_name, build_role_doc
 import frappe
 
-def create_role(role_name: str, description: str = "") -> dict:
+def create_role(role_name: str, permission: list = []) -> dict:
    
     validate_role_name(role_name)
 
-    role_data = build_role_doc(role_name, description)
+    role_data = build_role_doc(role_name)
 
     role = frappe.get_doc(role_data)
     role.insert(ignore_permissions=True)
-    # frappe.db.commit()
+    create_permission(permission, role.name)
 
     return {"roleId": role.name}
 

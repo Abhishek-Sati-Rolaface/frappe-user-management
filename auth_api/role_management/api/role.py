@@ -8,10 +8,10 @@ def create():
     data = frappe.request.get_json()
 
     role_name   = data.get("role")
-    description = data.get("description", "")
+    permission = data.get("permission", [])
 
     try:
-        result = create_role(role_name=role_name, description=description)
+        result = create_role(role_name=role_name, permission=permission)
 
         return response.success(result, http_status_code=200)
 
