@@ -24,9 +24,7 @@ class UserRepository:
         return user
     
     @staticmethod
-    def get_users(filters=None, search=None, limit_start=0, limit_page_length=10):
-
-        query_filters = filters or {}
+    def get_users(search=None, limit_start=0, limit_page_length=10):
 
         or_filters = None
 
@@ -41,7 +39,6 @@ class UserRepository:
 
         return frappe.get_all(
             "User",
-            filters=query_filters,
             or_filters=or_filters,
             fields=[
                 "name as id",

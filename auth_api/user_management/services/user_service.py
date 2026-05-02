@@ -19,13 +19,11 @@ class UserService:
             raise
 
     @staticmethod
-    def get_users(page=1, page_size=10, search="", filters=None):
+    def get_users(page=1, page_size=10, search=""):
 
-        filters = filters or {}
         limit_start = (page - 1) * page_size
 
         users = UserRepository.get_users(
-            filters=filters,
             search=search,
             limit_start=limit_start,
             limit_page_length=page_size
