@@ -10,12 +10,13 @@ class SignupSchema(BaseModel):
     lastName: str = Field(..., min_length=2)
     gender: Optional[str] = None
     phone: Optional[str] = None
+    mobile_no: Optional[str] = None
     dob: Optional[date] = None
     email: EmailStr
     username: str = Field(..., min_length=4)
     language: Optional[str] = None
     timezone: Optional[str] = None
-    roleIds: List[int]
+    roleIds: List[str]
     status: str = "Active"
 
     @field_validator("dob", mode="before")
