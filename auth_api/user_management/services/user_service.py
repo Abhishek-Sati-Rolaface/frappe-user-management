@@ -45,3 +45,19 @@ class UserService:
                 "has_prev": page > 1,
             }
         }
+
+    @staticmethod
+    def update_user_details(payload:dict) -> dict:
+        try:
+            frappe.db.begin()
+    
+            UserRepository.update_user(payload["userId"],payload)
+
+            return {
+                "status": "success",
+                "message": "User updated successfully"
+            }
+
+        except Exception:
+            frappe.db.rollback()
+            raise

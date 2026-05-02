@@ -52,3 +52,34 @@ class UserRepository:
             limit_page_length=limit_page_length,
             order_by="creation desc"
         )
+
+    @staticmethod
+    def get_user_by_id(user_id):
+        return frappe.get_doc("User", user_id)
+
+    @staticmethod
+    def update_user(user_id: str, data: dict) -> frappe.model.document.Document:
+        user = frappe.get_doc("User", user_id)
+
+        field_map = {
+            "firstName":  "first_name",
+            "middleName": "middle_name",
+            "lastName":   "last_name",
+            "username":   "username",
+            "language":   "language",
+            "timezone":   "time_zone",
+            "gender":     "gender",
+            "dob":        "birth_date",
+            "phone":      "phone",
+            "mobile_no":  "mobile_no",
+        }
+
+        for payload_key, doc_field in field_map.items():
+            if payload_key in data:
+                setattr(user, doc_field, data[payload_key])
+
+        if "roleIds" in data:
+            user.set("roles", [{"role": role} for role in data["roleIds"]])
+
+        user.save(ignore_permissions=True)
+        return user
