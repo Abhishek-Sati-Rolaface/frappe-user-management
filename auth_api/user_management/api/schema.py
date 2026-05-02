@@ -7,7 +7,7 @@ import frappe
 class SignupSchema(BaseModel):
     firstName: str = Field(..., min_length=2)
     middleName: Optional[str] = None
-    lastName: str = Field(..., min_length=2)
+    lastName: Optional[str] = None
     gender: Optional[str] = None
     phone: Optional[str] = None
     mobile_no: Optional[str] = None
@@ -16,7 +16,7 @@ class SignupSchema(BaseModel):
     username: str = Field(..., min_length=4)
     language: Optional[str] = None
     timezone: Optional[str] = None
-    roleIds: List[str]
+    roleIds: Optional[List[str]]
     status: str = "Active"
 
     @field_validator("dob", mode="before")

@@ -2,7 +2,7 @@ import frappe
 class UserRepository:
     @staticmethod
     def create_user(data: dict) -> frappe.model.document.Document:
-        print(data)
+
         user = frappe.get_doc({
             "doctype": "User",
             "email": data["email"],
@@ -22,3 +22,36 @@ class UserRepository:
 
         user.insert(ignore_permissions=True)
         return user
+    
+    @staticmethod
+    def get_users(filters=None, search=None, limit_start=0, limit_page_length=10):
+
+        query_filters = filters or {}
+
+        or_filters = None
+
+        if search:
+            or_filters = [
+                ["name", "like", f"%{search}%"],
+                ["email", "like", f"%{search}%"],
+                ["first_name", "like", f"%{search}%"],
+                ["last_name", "like", f"%{search}%"],
+                ["username", "like", f"%{search}%"],
+            ]
+
+        return frappe.get_all(
+            "User",
+            filters=query_filters,
+            or_filters=or_filters,
+            fields=[
+                "name as id",
+                "email",
+                "full_name as name",
+                "username",
+                "enabled",
+                "creation"
+            ],
+            limit_start=limit_start,
+            limit_page_length=limit_page_length,
+            order_by="creation desc"
+        )

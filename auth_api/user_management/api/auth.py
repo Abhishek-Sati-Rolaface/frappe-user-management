@@ -51,3 +51,20 @@ def logout():
         return response.error("Unable to process your request, Please try again later",
                                 http_status_code=500
                             )
+
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get():
+
+    data = frappe.local.form_dict
+    page = int(data.get("page", 1))
+    page_size = int(data.get("pageSize", 10))
+    search = data.get("search")
+
+    user_response = user_service.UserService.get_users(page, page_size, search)
+    return response.send_response_list(
+                            status = "success",
+                            message = "Users fetched successfully.",
+                            data = user_response,
+                            status_code = 200,
+                            http_status = 200,
+                        )
