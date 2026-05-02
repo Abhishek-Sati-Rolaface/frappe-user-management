@@ -33,7 +33,7 @@ def get_all_roles(page, page_size, search: str = None) -> dict:
     normalized = [
         {
             "Id": role.name,
-            "roleNa": role.role_name,
+            "roleName": role.role_name,
             "disabled": role.disabled
         }
         for role in roles
