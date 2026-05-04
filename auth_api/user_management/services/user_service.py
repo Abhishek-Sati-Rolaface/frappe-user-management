@@ -70,8 +70,14 @@ class UserService:
                 "status": "error",
                 "message": "User not found"
             }
-        else:
-            return{
+        roles = frappe.db.get_all(
+                "Has Role",
+                filters = {
+                    "parent": user_id,
+                    "parenttype": "User",
+                }, pluck = "role",
+            )          
+        return{
                 "firstName": user.first_name,
                 "lastName": user.last_name,
                 "fullName": user.full_name,
@@ -83,5 +89,5 @@ class UserService:
                 "dob": user.birth_date,
                 "phone": user.phone,
                 "mobile_no":user.mobile_no,
-                "roles": frappe.get_roles()
+                "roles": roles
             }
