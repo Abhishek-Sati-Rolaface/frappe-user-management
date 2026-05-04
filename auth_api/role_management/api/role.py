@@ -1,4 +1,4 @@
-from auth_api.role_management.services.role_service import create_role, get_all_roles, get_role, update_role
+from auth_api.role_management.services.role_service import create_role, get_all_roles, get_role, update_role, update_role_status
 from auth_api.user_management.utils import response
 
 import frappe
@@ -70,3 +70,18 @@ def update():
 
     except ValueError as e:
         return response.error(str(e))
+    
+@frappe.whitelist(allow_guest=False, methods=["PUT"])
+def update_status():
+    data = frappe.request.get_json()
+
+    role_id     = data.get("id")
+    is_disabled = data.get("isDisabled")
+    if not role_id:
+        return response.error("Role is required")
+    try:
+        result = update_role_status(role_id=role_id, is_disabled=is_disabled)
+        return response.success(result, f"Role {'disabled' if is_disabled else 'enabled'} successfully.")
+
+    except Exception as err:
+        response.error(str(err))

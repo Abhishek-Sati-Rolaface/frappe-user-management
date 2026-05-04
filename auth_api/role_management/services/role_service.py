@@ -22,6 +22,15 @@ def update_role(role_id: str, permissions: list = []) -> dict:
     delete_removed_permissions(role_id, incoming_modules)
     return {"roleId": role_id}
 
+def update_role_status(role_id: str, is_disabled: bool):
+    frappe.db.set_value("Role", role_id, "disabled", int(is_disabled))
+    frappe.db.commit()
+
+    return {
+        "roleId":   role_id,
+        "disabled": is_disabled,
+    }
+
 def get_all_roles(page, page_size, search: str = None) -> dict:
   
     or_filters    = build_role_search_filter(search=search)
