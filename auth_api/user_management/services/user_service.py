@@ -61,3 +61,27 @@ class UserService:
         except Exception:
             frappe.db.rollback()
             raise
+    
+    @staticmethod
+    def get_user(user_id) -> dict:
+        user = frappe.get_doc("User", user_id)
+        if not user:
+            return{
+                "status": "error",
+                "message": "User not found"
+            }
+        else:
+            return{
+                "firstName": user.first_name,
+                "lastName": user.last_name,
+                "fullName": user.full_name,
+                "email": user.email,
+                "gender": user.gender,
+                "username": user.username,
+                "language": user.language,
+                "timezone": user.time_zone,
+                "dob": user.birth_date,
+                "phone": user.phone,
+                "mobile_no":user.mobile_no,
+                "roles": frappe.get_roles()
+            }

@@ -57,7 +57,7 @@ def get():
 
     data = frappe.local.form_dict
     page = int(data.get("page", 1))
-    page_size = int(data.get("pageSize", 10))
+    page_size = int(data.get("page_size", 10))
     search = data.get("search")
 
     user_response = user_service.UserService.get_users(page, page_size, search)
@@ -79,3 +79,11 @@ def update(**payload):
         return response.success(user.get("message"), http_status_code=201)
     except ValidationError as e:
         return response.validation_error(format_pydantic_errors(e))
+    
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get_user_by_id():
+    user_id = frappe.request.args.get("id")
+    
+    user_detail = user_service.UserService.get_user(user_id)
+    
+    return response.success(user_detail, http_status_code=201)

@@ -54,10 +54,6 @@ class UserRepository:
         )
 
     @staticmethod
-    def get_user_by_id(user_id):
-        return frappe.get_doc("User", user_id)
-
-    @staticmethod
     def update_user(user_id: str, data: dict) -> frappe.model.document.Document:
         user = frappe.get_doc("User", user_id)
 
