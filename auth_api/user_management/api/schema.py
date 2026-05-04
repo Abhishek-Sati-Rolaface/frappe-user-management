@@ -98,7 +98,7 @@ class UpdateUserSchema(BaseModel):
     @classmethod
     def validate_username_unique(cls, v, info):
 
-        user_id = info.data.get("userId")
+        user_id = info.data.get("id")
 
         existing_user = frappe.db.get_value(
                             "User",
