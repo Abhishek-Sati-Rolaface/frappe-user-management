@@ -51,7 +51,7 @@ class UserService:
         try:
             frappe.db.begin()
     
-            UserRepository.update_user(payload["userId"],payload)
+            UserRepository.update_user(payload["id"],payload)
 
             return {
                 "status": "success",

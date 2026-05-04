@@ -7,11 +7,12 @@ def _clean():
         frappe.response.pop(key, None)
     frappe.clear_messages()
 
-def success(data=None, http_status_code=200):
+def success(data=None, message=None ,http_status_code=200):
     _clean()
     frappe.local.response.http_status_code = http_status_code
     frappe.response["message"] = {
         "status"  : "success",
+        "message": message,
         "data"    : data
     }
 

@@ -1,5 +1,5 @@
 from auth_api.role_management.services.permission_service import create_permission
-from auth_api.role_management.utils.role_utils import build_role_search_filter, validate_role_exists, validate_role_name, build_role_doc
+from auth_api.role_management.utils.role_utils import build_role_search_filter, delete_removed_permissions, validate_role_exists, validate_role_name, build_role_doc
 import frappe
 
 def create_role(role_name: str, permission: list = []) -> dict:
@@ -13,6 +13,14 @@ def create_role(role_name: str, permission: list = []) -> dict:
     create_permission(permission, role.name)
 
     return {"roleId": role.name}
+
+def update_role(role_id: str, permissions: list = []) -> dict:
+   
+    create_permission(permissions, role_id)
+    incoming_modules = [perm["module"] for perm in permissions if perm.get("module")]
+
+    delete_removed_permissions(role_id, incoming_modules)
+    return {"roleId": role_id}
 
 def get_all_roles(page, page_size, search: str = None) -> dict:
   

@@ -27,3 +27,23 @@ def validate_role_exists(role_name: str) -> None:
     """Raise ValueError if role does not exist."""
     if not frappe.db.exists("Role", role_name):
         raise ValueError(f"Role '{role_name}' not found.")
+    
+def delete_removed_permissions(role_name: str, incoming_modules: list[str]) -> None:
+
+    existing_modules = frappe.db.get_all(
+                            "Custom DocPerm",
+                            filters = {"role": role_name},
+                            pluck   = "parent",
+                        )
+
+    modules_to_delete = [m for m in existing_modules if m not in incoming_modules]
+
+    if not modules_to_delete:
+        return
+
+    for module in modules_to_delete:
+        custom_docperms = frappe.db.get_values(
+                                "Custom DocPerm", {"parent": module, "role": role_name}
+                            )
+        for name in custom_docperms:
+            frappe.delete_doc("Custom DocPerm", name, ignore_permissions=True, force=True)
