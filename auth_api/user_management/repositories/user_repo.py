@@ -1,9 +1,8 @@
-from auth_api.user_management.utils.project_enum import ROLE_MAP
 import frappe
-
 class UserRepository:
     @staticmethod
     def create_user(data: dict) -> frappe.model.document.Document:
+
         user = frappe.get_doc({
             "doctype": "User",
             "email": data["email"],
@@ -14,13 +13,69 @@ class UserRepository:
             "language": data.get("language"),
             "time_zone": data.get("timezone"),
             "enabled": 1,
-            "roles": []
+            "roles": [{"role": role} for role in data.get("roleIds", [])],
+            "gender": data["gender"],
+            "birth_date": data["dob"],
+            "phone": data["phone"],
+            "mobile_no": data["mobile_no"]
         })
 
-        for role_id in data.get("roleIds", []):
-            role_name = ROLE_MAP.get(role_id)
-            if role_name:
-                user.append("roles", {"role": role_name})
-
         user.insert(ignore_permissions=True)
+        return user
+    
+    @staticmethod
+    def get_users(search=None, limit_start=0, limit_page_length=10):
+
+        or_filters = None
+
+        if search:
+            or_filters = [
+                ["name", "like", f"%{search}%"],
+                ["email", "like", f"%{search}%"],
+                ["first_name", "like", f"%{search}%"],
+                ["last_name", "like", f"%{search}%"],
+                ["username", "like", f"%{search}%"],
+            ]
+
+        return frappe.get_all(
+            "User",
+            or_filters=or_filters,
+            fields=[
+                "name as id",
+                "email",
+                "full_name as name",
+                "username",
+                "enabled",
+                "creation"
+            ],
+            limit_start=limit_start,
+            limit_page_length=limit_page_length,
+            order_by="creation desc"
+        )
+
+    @staticmethod
+    def update_user(user_id: str, data: dict) -> frappe.model.document.Document:
+        user = frappe.get_doc("User", user_id)
+
+        field_map = {
+            "firstName":  "first_name",
+            "middleName": "middle_name",
+            "lastName":   "last_name",
+            "username":   "username",
+            "language":   "language",
+            "timezone":   "time_zone",
+            "gender":     "gender",
+            "dob":        "birth_date",
+            "phone":      "phone",
+            "mobile_no":  "mobile_no",
+        }
+
+        for payload_key, doc_field in field_map.items():
+            if payload_key in data:
+                setattr(user, doc_field, data[payload_key])
+
+        if "roleIds" in data:
+            user.set("roles", [{"role": role} for role in data["roleIds"]])
+
+        user.save(ignore_permissions=True)
         return user

@@ -1,4 +1,4 @@
-from auth_api.user_management.api.schema import SignupSchema
+from auth_api.user_management.api.schema import SignupSchema, UpdateUserSchema
 from auth_api.user_management.utils import response
 from auth_api.user_management.utils.pydantic_errors import format_pydantic_errors
 import frappe
@@ -51,3 +51,39 @@ def logout():
         return response.error("Unable to process your request, Please try again later",
                                 http_status_code=500
                             )
+
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get():
+
+    data = frappe.local.form_dict
+    page = int(data.get("page", 1))
+    page_size = int(data.get("page_size", 10))
+    search = data.get("search")
+
+    user_response = user_service.UserService.get_users(page, page_size, search)
+    return response.send_response_list(
+                            status = "success",
+                            message = "Users fetched successfully.",
+                            data = user_response,
+                            status_code = 200,
+                            http_status = 200,
+                        )
+
+@frappe.whitelist(allow_guest=True, methods=["PUT"])
+def update(**payload):
+    try:
+        data = UpdateUserSchema(**payload).model_dump()
+        user = user_service.UserService.update_user_details(data)
+        if user.get("status") == "error":
+            return response.error(user.get("message"))
+        return response.success(user.get("message"), http_status_code=201)
+    except ValidationError as e:
+        return response.validation_error(format_pydantic_errors(e))
+    
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get_user_by_id():
+    user_id = frappe.request.args.get("id")
+    
+    user_detail = user_service.UserService.get_user(user_id)
+    
+    return response.success(user_detail, http_status_code=201)
