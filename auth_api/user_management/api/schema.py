@@ -63,7 +63,7 @@ class SignupSchema(BaseModel):
         return v
     
 class UpdateUserSchema(BaseModel):
-    userId: str
+    id: str
     firstName: str = Field(..., min_length=2)
     middleName: Optional[str] = None
     lastName: Optional[str] = None
