@@ -80,6 +80,7 @@ class UserService:
         return{
                 "firstName": user.first_name,
                 "lastName": user.last_name,
+                "midleName": user.middle_name,
                 "fullName": user.full_name,
                 "email": user.email,
                 "gender": user.gender,
