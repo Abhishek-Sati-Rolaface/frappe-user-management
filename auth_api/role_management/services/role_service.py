@@ -89,6 +89,13 @@ def get_role(role_name: str) -> dict:
             "print", "report", "import", "export",
         ],
     )
+    if not raw_perms:
+        raw_perms = frappe.get_all("DocPerm", filters={"role": role_name},
+                        fields=[
+                            "parent", "read", "write", "create", "delete",
+                            "print", "report", "import", "export",
+                        ])
+
 
     permissions = [
         {
