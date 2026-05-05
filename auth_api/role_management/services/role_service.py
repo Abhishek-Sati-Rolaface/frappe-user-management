@@ -1,6 +1,7 @@
 from auth_api.role_management.services.permission_service import create_permission
 from auth_api.role_management.utils.role_utils import build_role_search_filter, delete_removed_permissions, validate_role_exists, validate_role_name, build_role_doc
 import frappe
+from frappe.permissions import get_all_perms
 
 def create_role(role_name: str, permission: list = []) -> dict:
    
@@ -81,22 +82,7 @@ def get_role(role_name: str) -> dict:
                 as_dict=True,
             )
 
-    raw_perms = frappe.db.get_all(
-        "Custom DocPerm",
-        filters={"role": role_name},
-        fields=[
-            "parent", "read", "write", "create", "delete",
-            "print", "report", "import", "export",
-        ],
-    )
-    if not raw_perms:
-        raw_perms = frappe.get_all("DocPerm", filters={"role": role_name},
-                        fields=[
-                            "parent", "read", "write", "create", "delete",
-                            "print", "report", "import", "export",
-                        ])
-
-
+    perms = get_all_perms(role_name)
     permissions = [
         {
             "module": perm.parent,
@@ -108,7 +94,7 @@ def get_role(role_name: str) -> dict:
             "import": perm.get("import"),
             "export": perm.export,
         }
-        for perm in raw_perms
+        for perm in perms
     ]
 
     return {
