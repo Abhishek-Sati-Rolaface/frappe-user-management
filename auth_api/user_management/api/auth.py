@@ -87,3 +87,10 @@ def get_user_by_id():
     user_detail = user_service.UserService.get_user(user_id)
     
     return response.success(user_detail, http_status_code=201)
+
+@frappe.whitelist(allow_guest=False, methods=["GET"])
+def get_login_user():
+    user = frappe.get_doc('User', frappe.session.user)
+    user_detail = user_service.UserService.get_user(user.name)
+    return response.success(user_detail, http_status_code=201)
+    

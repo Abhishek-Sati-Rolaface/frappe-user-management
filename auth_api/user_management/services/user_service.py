@@ -1,5 +1,6 @@
 from auth_api.user_management.repositories.user_repo import UserRepository
 import frappe
+from frappe.permissions import get_all_perms
 class UserService:
 
     @staticmethod
@@ -77,7 +78,41 @@ class UserService:
                     "parenttype": "User",
                 }, pluck = "role",
             )          
-        return{
+
+        module_permissions_map = {}
+
+        for role in roles:
+            perms = get_all_perms(role)
+            for perm in perms:
+
+                module = perm.parent
+
+                if not module:
+                    continue
+
+                if module not in module_permissions_map:
+                    module_permissions_map[module] = {
+                        "module": module,
+                        "read": 0,
+                        "write": 0,
+                        "create": 0,
+                        "delete": 0,
+                        "report": 0,
+                        "import": 0,
+                        "export": 0,
+                    }
+
+                module_permissions_map[module]["read"]   = max(module_permissions_map[module]["read"], perm.read)
+                module_permissions_map[module]["write"]  = max(module_permissions_map[module]["write"], perm.write)
+                module_permissions_map[module]["create"] = max(module_permissions_map[module]["create"], perm.create)
+                module_permissions_map[module]["delete"] = max(module_permissions_map[module]["delete"], perm.delete)
+                module_permissions_map[module]["report"] = max(module_permissions_map[module]["report"], perm.report)
+                module_permissions_map[module]["import"] = max(module_permissions_map[module]["import"], perm.get("import") or 0)
+                module_permissions_map[module]["export"] = max(module_permissions_map[module]["export"], perm.export)
+
+        modules_permissions = list(module_permissions_map.values())
+
+        return {
                 "firstName": user.first_name,
                 "lastName": user.last_name,
                 "middleName": user.middle_name,
@@ -90,5 +125,6 @@ class UserService:
                 "dob": user.birth_date,
                 "phone": user.phone,
                 "mobile_no":user.mobile_no,
-                "roles": roles
-            }
+                "roles": roles,
+                "permission": modules_permissions
+        }
