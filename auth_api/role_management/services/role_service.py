@@ -2,6 +2,7 @@ from auth_api.role_management.services.permission_service import create_permissi
 from auth_api.role_management.utils.role_utils import build_role_search_filter, delete_removed_permissions, validate_role_exists, validate_role_name, build_role_doc
 import frappe
 from frappe.permissions import get_all_perms
+from auth_api.role_management.utils.permission_mapper import expand_with_linked_permissions
 
 def create_role(role_name: str, permission: list = []) -> dict:
    
@@ -11,14 +12,19 @@ def create_role(role_name: str, permission: list = []) -> dict:
 
     role = frappe.get_doc(role_data)
     role.insert(ignore_permissions=True)
-    create_permission(permission, role.name)
+
+    expanded_permissions = expand_with_linked_permissions(permission)
+
+    create_permission(expanded_permissions, role.name)
 
     return {"roleId": role.name}
 
 def update_role(role_id: str, permissions: list = []) -> dict:
-   
-    create_permission(permissions, role_id)
-    incoming_modules = [perm["module"] for perm in permissions if perm.get("module")]
+
+    expanded_permissions = expand_with_linked_permissions(permissions)
+
+    create_permission(expanded_permissions, role_id)
+    incoming_modules = [perm["module"] for perm in expanded_permissions if perm.get("module")]
 
     delete_removed_permissions(role_id, incoming_modules)
     return {"roleId": role_id}
@@ -33,17 +39,19 @@ def update_role_status(role_id: str, is_disabled: bool):
     }
 
 def get_all_roles(page, page_size, search: str = None) -> dict:
-  
+    filters    = {"is_custom": 1}
+
     or_filters    = build_role_search_filter(search=search)
     limit_start   = (page - 1) * page_size
 
-    total = frappe.db.count("Role")
+    total = frappe.db.count("Role", filters=filters) #@TODO: If Filters are added, then only incule is_cutom: 1 filters
 
     roles = frappe.db.get_all(
-        doctype    = "Role",
+        doctype = "Role",
+        filters = filters,
         or_filters = or_filters or None,
-        fields       = ["name", "role_name", "disabled"],
-        order_by     = "creation desc",
+        fields = ["name", "role_name", "disabled"],
+        order_by = "creation desc",
         limit_start  = limit_start,
         limit_page_length = page_size,
     )

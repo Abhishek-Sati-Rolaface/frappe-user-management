@@ -1,4 +1,5 @@
-from frappe.permissions import add_permission, update_permission_property
+
+from frappe.permissions import add_permission, setup_custom_perms, update_permission_property
 import frappe
 
 # def create_permission(permissions, role_name):
@@ -43,21 +44,35 @@ def create_permission(permissions: list, role_name: str) -> None:
             to_insert.append({"doctype": doctype, "ptype_map": ptype_map})
 
     for item in to_insert:
+
+        # The create permission is replica of from frappe.permissions import add_permission
+
         doctype   = item["doctype"]
         ptype_map = item["ptype_map"]
 
-        add_permission(doctype=doctype, role=role_name)
-
-        frappe.db.set_value(
+        has_any_custom_perm = frappe.db.get_value(
             "Custom DocPerm",
-            {"parent": doctype, "role": role_name, "permlevel": 0},
-            ptype_map,
+            {"parent": doctype},
+            "name",
         )
+
+        if not has_any_custom_perm:
+            setup_custom_perms(doctype)
+
+        frappe.get_doc({
+            "doctype":     "Custom DocPerm",
+            "__islocal":   1,
+            "parent":      doctype,
+            "parenttype":  "DocType",
+            "parentfield": "permissions",
+            "role":        role_name,
+            "permlevel":   0,
+            **ptype_map,
+        }).insert(ignore_permissions=True)
 
     for item in to_update:
         doctype   = item["doctype"]
         ptype_map = item["ptype_map"]
-        ptype_map.pop("root_module", None)
 
         frappe.db.set_value(
             "Custom DocPerm",
