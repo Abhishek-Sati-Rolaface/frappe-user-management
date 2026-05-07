@@ -14,7 +14,13 @@ def login_user(username, password):
 
     # api_generate = generate_keys(frappe.session.user)
     user = frappe.get_doc('User', frappe.session.user)
-
+    roles = frappe.db.get_all(
+                "Has Role",
+                filters = {
+                    "parent": user.name,
+                    "parenttype": "User",
+                }, pluck = "role",
+            )    
     return {
         "status": "success",
         "message":{
@@ -25,6 +31,6 @@ def login_user(username, password):
                     "email":user.email,
                     "full_name":user.full_name,
                     "gender":user.gender,
-                    "roles": frappe.get_roles()
+                    "roles": roles
                 }
     }
