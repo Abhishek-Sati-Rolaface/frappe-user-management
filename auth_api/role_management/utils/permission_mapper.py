@@ -5,7 +5,7 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Supplier": ["Currency"],
     "Item": ["UOM", "Brand"],
     "Purchase Invoice": ["Cost Center", "Project"],
-
+    "Payment Entry": ["Account", "Cost Center", "Project"]
 }
 
 
