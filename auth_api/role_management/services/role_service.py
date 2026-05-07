@@ -101,6 +101,8 @@ def get_role(role_name: str) -> dict:
             "report": perm.report,
             "import": perm.get("import"),
             "export": perm.export,
+            "submit": perm.submit,
+            "cancel": perm.cancel,
         }
         for perm in perms
     ]

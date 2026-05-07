@@ -1,23 +1,21 @@
 
 LINKED_DOCTYPE_PERMISSION_MAP = {
     "Customer": ["Address", "Contact", "Currency"],
-    "Purchase Order": ["Cost Center", "Project"]
+    "Purchase Order": ["Cost Center", "Project", "Address"],
+    "Supplier": ["Currency"],
 }
 
 
 
 
 def expand_with_linked_permissions(permissions: list) -> list:
-    """
-    For each permission in the list, check if its module has linked doctypes.
-    If so, auto-generate permission entries for those linked doctypes
-    inheriting ALL ptypes from the root permission.
 
-    Already-present linked doctypes in the payload are NOT overwritten.
-
-    """
-    explicit_modules   = {p["module"] for p in permissions}
-    linked_permissions = []
+    # ── Used a dict to merge linked permissions by module ─────────────────────
+    # Key: linked_doctype, Value: merged ptype_map
+    # This handles the case where multiple roots share the same linked doctype
+    # e.g. Customer(read=0) + Supplier(read=1) → Currency gets read=1
+    explicit_modules = {p["module"] for p in permissions}
+    linked_map: dict = {}
 
     for permission in permissions:
         module          = permission["module"]
@@ -37,12 +35,19 @@ def expand_with_linked_permissions(permissions: list) -> list:
             if linked_doctype in explicit_modules:
                 continue
 
-            linked_permissions.append({
-                "module": linked_doctype,
-                **inherited_ptype_map,
-            })
+            if linked_doctype not in linked_map:
+                # First root to claim this linked doctype
+                linked_map[linked_doctype] = inherited_ptype_map.copy()
+            else:
+                # ── Merge — take the highest value (1 wins over 0) per ptype ──
+                for ptype, value in inherited_ptype_map.items():
+                    existing_value = linked_map[linked_doctype].get(ptype, 0)
+                    linked_map[linked_doctype][ptype] = max(existing_value, value)
 
-            # Prevent duplicates if multiple roots share the same linked doctype
-            explicit_modules.add(linked_doctype)
+    # ── Build final linked permissions list from merged map ──────────────────
+    linked_permissions = [
+        {"module": doctype, **ptype_map}
+        for doctype, ptype_map in linked_map.items()
+    ]
 
     return permissions + linked_permissions

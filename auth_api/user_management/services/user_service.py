@@ -100,6 +100,8 @@ class UserService:
                         "report": 0,
                         "import": 0,
                         "export": 0,
+                        "submit": 0,
+                        "cancel": 0,
                     }
 
                 module_permissions_map[module]["read"]   = max(module_permissions_map[module]["read"], perm.read)
@@ -109,6 +111,8 @@ class UserService:
                 module_permissions_map[module]["report"] = max(module_permissions_map[module]["report"], perm.report)
                 module_permissions_map[module]["import"] = max(module_permissions_map[module]["import"], perm.get("import") or 0)
                 module_permissions_map[module]["export"] = max(module_permissions_map[module]["export"], perm.export)
+                module_permissions_map[module]["submit"] = max(module_permissions_map[module]["submit"], perm.submit)
+                module_permissions_map[module]["cancel"] = max(module_permissions_map[module]["cancel"], perm.cancel)
 
         modules_permissions = list(module_permissions_map.values())
 
