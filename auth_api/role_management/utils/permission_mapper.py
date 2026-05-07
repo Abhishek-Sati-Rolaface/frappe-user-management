@@ -5,10 +5,9 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Supplier": ["Currency"],
     "Item": ["UOM", "Brand"],
     "Purchase Invoice": ["Cost Center", "Project", "Serial and Batch Bundle", "Address"],
-    "Payment Entry": ["Account", "Cost Center", "Project"]
+    "Payment Entry": ["GL Entry", "Cost Center", "Project"],
+    "Account": ["GL Entry"],
 }
-
-
 
 
 def expand_with_linked_permissions(permissions: list) -> list:
