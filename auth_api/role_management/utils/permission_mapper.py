@@ -3,7 +3,9 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Customer": ["Address", "Contact", "Currency"],
     "Purchase Order": ["Cost Center", "Project", "Address"],
     "Supplier": ["Currency"],
-    "Item": ["UOM", "Brand"]
+    "Item": ["UOM", "Brand"],
+    "Purchase Invoice": ["Cost Center", "Project"],
+
 }
 
 
