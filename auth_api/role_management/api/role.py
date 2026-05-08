@@ -1,9 +1,10 @@
 from auth_api.role_management.services.role_service import create_role, get_all_roles, get_role, update_role, update_role_status
 from auth_api.user_management.utils import response
-
+from custom_api.permission import require_permission
 import frappe
 
 @frappe.whitelist(allow_guest=False, methods=["POST"])
+@require_permission("Role", "create")
 def create():
     data = frappe.request.get_json()
 
@@ -19,6 +20,7 @@ def create():
         return response.error(str(e))
 
 @frappe.whitelist(allow_guest=False, methods=["GET"])
+@require_permission("Role", "read")
 def get():
     data = frappe.request.args
 
@@ -42,6 +44,7 @@ def get():
         return response.error(str(e))
 
 @frappe.whitelist(allow_guest=False, methods=["GET"])
+@require_permission("Role", "read")
 def get_by_id():
     role_name = frappe.request.args.get("id")
 
@@ -57,6 +60,7 @@ def get_by_id():
         return response.error(str(e))
 
 @frappe.whitelist(allow_guest=False, methods=["PUT"])
+@require_permission("Role", "write")
 def update():
     data = frappe.request.get_json()
 
@@ -72,6 +76,7 @@ def update():
         return response.error(str(e))
     
 @frappe.whitelist(allow_guest=False, methods=["PUT"])
+@require_permission("Role", "write")
 def update_status():
     data = frappe.request.get_json()
 
