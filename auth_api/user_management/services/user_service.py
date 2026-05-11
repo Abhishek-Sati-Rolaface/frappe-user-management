@@ -115,8 +115,15 @@ class UserService:
                 module_permissions_map[module]["cancel"] = max(module_permissions_map[module]["cancel"], perm.cancel)
 
         modules_permissions = list(module_permissions_map.values())
-
+        # ── Fetch Employee ID if this user is linked to an Employee ──────────────
+        employee_id = frappe.db.get_value(
+            "Employee",
+            {"user_id": user_id},
+            "name",
+        )
         return {
+                "userId": user.name,
+                "employeeId": employee_id,
                 "firstName": user.first_name,
                 "lastName": user.last_name,
                 "middleName": user.middle_name,
