@@ -73,6 +73,7 @@ def get_all_roles(page, page_size, search: str = None) -> dict:
             "roleName": employee_role.role_name,
             "disabled": employee_role.disabled,
         })
+        total += 1
 
     total_pages = max(1, -(-total // page_size))
 
