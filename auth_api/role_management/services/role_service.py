@@ -65,6 +65,15 @@ def get_all_roles(page, page_size, search: str = None) -> dict:
         for role in roles
     ]
 
+    employee_role = frappe.db.get_value("Role", "Employee", ["name", "role_name", "disabled"], as_dict=True)
+
+    if employee_role and not any(r["Id"] == "Employee" for r in normalized):
+        normalized.append({
+            "Id":       employee_role.name,
+            "roleName": employee_role.role_name,
+            "disabled": employee_role.disabled,
+        })
+
     total_pages = max(1, -(-total // page_size))
 
     return {
