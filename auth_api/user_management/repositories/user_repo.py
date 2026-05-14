@@ -24,10 +24,17 @@ class UserRepository:
         return user
     
     @staticmethod
-    def get_users(search=None, limit_start=0, limit_page_length=10):
+    def get_users(search=None, limit_start=0, limit_page_length=10, exclude_current_user=True):
+        
+        filters = [
+            ["name", "not in", ["Administrator", "Guest"]],
+            ["user_type", "=", "System User"],
+        ]
+        
+        if exclude_current_user and frappe.session.user:
+            filters.append(["name", "!=", frappe.session.user])
 
         or_filters = None
-
         if search:
             or_filters = [
                 ["name", "like", f"%{search}%"],
@@ -40,6 +47,7 @@ class UserRepository:
         return frappe.get_all(
             "User",
             or_filters=or_filters,
+            filters= filters,
             fields=[
                 "name as id",
                 "email",
