@@ -37,7 +37,7 @@ def forgot_password(email: str):
                                 http_status_code=200
                             )
     except Exception as e:
-        return response.error("Unable to process your request, Please try again later",
+        return response.error(str(e),
                                 http_status_code=500
                             )
     
