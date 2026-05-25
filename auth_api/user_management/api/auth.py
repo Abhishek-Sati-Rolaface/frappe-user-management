@@ -4,6 +4,7 @@ from auth_api.user_management.utils.pydantic_errors import format_pydantic_error
 import frappe
 from auth_api.user_management.services import auth_service, user_service
 from pydantic import ValidationError
+from frappe.core.doctype.user.user import reset_password
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 def login(usr, pwd):
@@ -31,7 +32,7 @@ def forgot_password(email: str):
     try:
         user = frappe.get_doc("User", email)
 
-        user.reset_password(send_email=True)
+        reset_password(user=email)
         return response.success(
                                 "Password reset link sent to your email, Please check your inbox", 
                                 http_status_code=200
