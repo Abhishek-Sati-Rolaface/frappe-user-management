@@ -28,7 +28,6 @@ class UserRepository:
         
         filters = [
             ["name", "not in", ["Administrator", "Guest"]],
-            ["user_type", "=", "System User"],
         ]
         
         if exclude_current_user and frappe.session.user:
