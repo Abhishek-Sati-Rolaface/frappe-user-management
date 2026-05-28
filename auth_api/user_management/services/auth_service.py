@@ -5,7 +5,7 @@ from auth_api.user_management.utils.common import generate_keys
 def login_user(username, password):
     try:
         login_manager = frappe.auth.LoginManager()
-        login_manager.authenticate(user=username, pwd=password)
+        login_manager.authenticate(user=username.strip(), pwd=password.strip())
         login_manager.post_login()
 
     except frappe.exceptions.AuthenticationError:
