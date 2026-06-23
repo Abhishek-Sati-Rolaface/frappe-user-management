@@ -52,6 +52,28 @@ class UserRepository:
             limit_page_length=limit_page_length,
             order_by="creation desc"
         )
+    
+    @staticmethod
+    def get_users_count(search=None) -> int:
+
+        or_filters = None
+
+        if search:
+            or_filters = [
+                ["name", "like", f"%{search}%"],
+                ["email", "like", f"%{search}%"],
+                ["first_name", "like", f"%{search}%"],
+                ["last_name", "like", f"%{search}%"],
+                ["username", "like", f"%{search}%"],
+            ]
+
+        result = frappe.get_all(
+            "User",
+            or_filters=or_filters,
+            pluck="name",
+        )
+
+        return len(result)
 
     @staticmethod
     def update_user(user_id: str, data: dict) -> frappe.model.document.Document:

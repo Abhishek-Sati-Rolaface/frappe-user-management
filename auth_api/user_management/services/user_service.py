@@ -30,10 +30,10 @@ class UserService:
             limit_page_length=page_size
         )
 
-        total = len(users)
+        total = UserRepository.get_users_count(search=search)
 
-        total_pages = (total + page_size - 1) // page_size
-        print(type(users))
+        total_pages = (total + page_size - 1) // page_size if total else 0
+
         return {
             "status": "success",
             "data": users,
