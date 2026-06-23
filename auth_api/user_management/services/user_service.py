@@ -23,14 +23,16 @@ class UserService:
     def get_users(page=1, page_size=10, search=""):
 
         limit_start = (page - 1) * page_size
-
+        filters = [
+            ["name", "not in", ["Administrator", "Guest"]],
+        ]
         users = UserRepository.get_users(
             search=search,
             limit_start=limit_start,
             limit_page_length=page_size
         )
 
-        total = len(users)
+        total = frappe.db.count("User", filters=filters)
 
         total_pages = (total + page_size - 1) // page_size
         print(type(users))
