@@ -31,6 +31,7 @@ def login_user(username, password):
                     "email":user.email,
                     "full_name":user.full_name,
                     "gender":user.gender,
-                    "roles": roles
+                    "roles": roles,
+                    "is_zra_enabled":  bool(frappe.conf.get("zra_tpin"))
                 }
     }

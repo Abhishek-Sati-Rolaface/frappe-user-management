@@ -139,5 +139,6 @@ class UserService:
                 "phone": user.phone,
                 "mobile_no":user.mobile_no,
                 "roles": roles,
-                "permission": modules_permissions
+                "permission": modules_permissions,
+                "is_zra_enabled":  bool(frappe.conf.get("zra_tpin"))
         }
