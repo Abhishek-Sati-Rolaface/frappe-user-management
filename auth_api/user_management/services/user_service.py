@@ -123,6 +123,8 @@ class UserService:
             {"user_id": user_id},
             "name",
         )
+        installed_apps = frappe.get_installed_apps()
+
         return {
                 "userId": user.name,
                 "employeeId": employee_id,
@@ -140,5 +142,6 @@ class UserService:
                 "mobile_no":user.mobile_no,
                 "roles": roles,
                 "permission": modules_permissions,
-                "is_zra_enabled":  bool(frappe.conf.get("zra_tpin"))
+                "is_zra_enabled":  True if "zra_smart_invoice" in installed_apps else False,
+                "subscribed_modules": installed_apps
         }
