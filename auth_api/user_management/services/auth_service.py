@@ -21,6 +21,8 @@ def login_user(username, password):
                     "parenttype": "User",
                 }, pluck = "role",
             )    
+    installed_apps = frappe.get_installed_apps()
+
     return {
         "status": "success",
         "message":{
@@ -32,6 +34,8 @@ def login_user(username, password):
                     "full_name":user.full_name,
                     "gender":user.gender,
                     "roles": roles,
-                    "is_zra_enabled":  bool(frappe.conf.get("zra_tpin"))
+                    "is_zra_enabled":  bool(frappe.conf.get("zra_tpin")),
+                    "subscribed_modules": installed_apps
+
                 }
     }
