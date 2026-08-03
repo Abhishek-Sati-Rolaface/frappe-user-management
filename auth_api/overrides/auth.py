@@ -36,5 +36,6 @@ def validate_bearer_sid():
         frappe.local.cookie_manager.set_cookie("user_id", session_data.get("user"), deduplicate=True)
         frappe.local.cookie_manager.set_cookie("user_lang", frappe.local.lang, deduplicate=True)
         frappe.local.cookie_manager.set_cookie("sid", sid, deduplicate=True)
+        frappe.loacal.cookie_manager.set_cookie("SameSite", None, deduplicate=True)
 
 
