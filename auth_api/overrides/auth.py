@@ -29,13 +29,14 @@ def validate_bearer_sid():
         frappe.set_user(user)
         session_data = frappe.safe_decode(sessions_data[0].sessiondata)
         session_data = json.loads(session_data)
-        full_name = frappe.db.get_value("User", user, "full_name")
-
+        user_info = frappe.db.get_value("User", user, ["full_name", "user_type"], as_dict=True)
         frappe.local.cookie_manager.init_cookies()
-        frappe.local.cookie_manager.set_cookie("full_name", full_name, samesite="None", deduplicate=True)
+        frappe.local.cookie_manager.set_cookie("full_name", user_info.get("full_name"), samesite="None", deduplicate=True)
         frappe.local.cookie_manager.set_cookie("user_id", session_data.get("user"), samesite="None", deduplicate=True)
         frappe.local.cookie_manager.set_cookie("user_lang", frappe.local.lang, samesite="None", deduplicate=True)
         # frappe.local.cookie_manager.set_cookie("sid", sid, deduplicate=True)
         frappe.local.cookie_manager.set_cookie("sid", sid, samesite="None", secure=True, httponly=True, deduplicate=True)
-
-
+        if user_info.user_type == "Website User":
+            frappe.local.cookie_manager.set_cookie("system_user", "no",  samesite="None", deduplicate=True)
+        else:
+            frappe.local.cookie_manager.set_cookie("system_user", "yes",  samesite="None", deduplicate=True)
