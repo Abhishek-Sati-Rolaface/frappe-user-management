@@ -6,7 +6,7 @@ from frappe import _
 
 def validate_bearer_sid():
     cookies = frappe.get_request_header("Cookie", "")
-    if not cookies or "sid=Guest" in cookies:
+    if not cookies or "sid=Guest" in cookies or not "sid" in cookies:
         auth_header = frappe.get_request_header("Authorization", "")
         if not auth_header.startswith("Bearer "):
             return
