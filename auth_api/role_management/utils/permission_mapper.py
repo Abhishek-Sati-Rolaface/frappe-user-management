@@ -13,7 +13,7 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Loan": ["Loan Security Assignment"],
     "Loan Restructure": ["Loan Repayment Schedule"],
     "Loan Disbursement": ["Loan Repayment Schedule"],
-    "Loan Repayment":["Loan Interest Accrual"],
+    "Loan Repayment":["Loan Interest Accrual", "Loan Demand"],
 }
 
 
