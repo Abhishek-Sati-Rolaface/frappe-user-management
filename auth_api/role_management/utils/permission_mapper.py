@@ -10,7 +10,10 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Role": ["Custom DocPerm"],
     "Employee": ["Address", "Contact", "Department", "Designation", "Employee Grade", "Employment Type"],
     "Payroll Entry": ["Salary Component", "Salary Structure", "Income Tax Slab", "Payroll Period"],
-    "Loan": ["Loan Security Assignment"]
+    "Loan": ["Loan Security Assignment"],
+    "Loan Restructure": ["Loan Repayment Schedule"],
+    "Loan Disbursement": ["Loan Repayment Schedule"],
+    "Loan Repayment":["Loan Interest Accrual"]
 }
 
 
