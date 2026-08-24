@@ -9,7 +9,8 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Sales Invoice": ["Cost Center", "Project", "Serial and Batch Bundle", "Address"],
     "Role": ["Custom DocPerm"],
     "Employee": ["Address", "Contact", "Department", "Designation", "Employee Grade", "Employment Type"],
-    "Payroll Entry": ["Salary Component", "Salary Structure", "Income Tax Slab", "Payroll Period"]
+    "Payroll Entry": ["Salary Component", "Salary Structure", "Income Tax Slab", "Payroll Period"],
+    "Loan": ["Loan Security Assignment"]
 }
 
 
