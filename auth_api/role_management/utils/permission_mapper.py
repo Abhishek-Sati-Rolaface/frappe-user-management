@@ -12,8 +12,8 @@ LINKED_DOCTYPE_PERMISSION_MAP = {
     "Payroll Entry": ["Salary Component", "Salary Structure", "Income Tax Slab", "Payroll Period"],
     "Loan": ["Loan Security Assignment"],
     "Loan Restructure": ["Loan Repayment Schedule"],
-    "Loan Disbursement": ["Loan Repayment Schedule"],
-    "Loan Repayment":["Loan Interest Accrual", "Loan Demand"],
+    "Loan Disbursement": ["Loan Repayment Schedule", "Process Loan Interest Accrual", "Customer"],
+    "Loan Repayment":["Loan Interest Accrual", "Loan Demand", "Journal Entry"],
 }
 
 
