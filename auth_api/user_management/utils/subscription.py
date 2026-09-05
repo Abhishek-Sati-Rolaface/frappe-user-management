@@ -34,7 +34,7 @@ def get_subscribed_modules():
             return False
         return True
 
-    def build(parent_name, ancestor_active=True):
+    def build(parent_name, ancestor_active=True, add_enabled=False):
         node = {}
         for r in by_parent.get(parent_name, []):
             active = ancestor_active and is_active(r)
@@ -42,11 +42,14 @@ def get_subscribed_modules():
             if r.name == "lending":
                 node[key] = active
             elif r.is_group:
-                node[key] = build(r.name, active)
+                child = build(r.name, active)
+                if add_enabled:
+                    child = {"enabled": active, **child}
+                node[key] = child   
             else:
                 node[key] = active
         return node
 
-    result = build(None)
+    result = build(None, add_enabled=True)
     frappe.cache().set_value(CACHE_KEY, result, expires_in_sec=3600)
     return result
